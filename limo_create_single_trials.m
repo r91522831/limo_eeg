@@ -49,6 +49,15 @@ function limo_create_single_trials(EEG,varargin)
 % ------------------------------------------
 % Copyright (C) LIMO Team 2014
 
+
+
+
+% for development
+disp('!!!!!!!!!!!!!!This is the forked version of LIMO!!!!!!!!!!!!!!!!!!!!')
+
+
+
+
 %% deal with options
 % set defaults
 try
@@ -106,10 +115,11 @@ else
 end
 
 STUDY = struct;
-[trash,name]=fileparts(ALLEEG.filepath); clear trash
+% % % [~, name] = fileparts(ALLEEG.filepath); % dataset file should be located in a subject folder, commented by Yen, 4 Apr, 2019
+name = ALLEEG.setname;
 [STUDY ALLEEG] = std_editset(STUDY, ALLEEG, 'commands',{{'index' 1 'subject' name}},'updatedat','off' );
 STUDY.name = ALLEEG.filename; [STUDY ALLEEG] = std_checkset(STUDY, ALLEEG);
-name = [ALLEEG.filepath filesep ALLEEG.filename '_single_trials'];
+name = fullfile(ALLEEG.filepath, name); % ALLEEG.filename '_single_trials']; % modified by Yen, 3 Apr, 2019
 STUDY.design.cell.filebase = name;
 
 %% compute
@@ -127,6 +137,8 @@ if strcmp(opt.datatype,'channels')
             save([name '_daterp.mat'],'data'); clear data
             ALLEEG.etc.datafiles.daterp = [name '_daterp.mat'];
             delete([name '.daterp']);
+            disp('Convert .daterp file into matrix')
+            disp([ 'Saving ERP file ''' [name '_daterp.mat'] '''' ]);
         else
             ALLEEG.etc.datafiles.daterp = [name '.daterp'];
         end
